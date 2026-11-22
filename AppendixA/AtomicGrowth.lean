@@ -102,18 +102,20 @@ theorem tempered_translated_test_polynomial_growth
       mul_le_mul_of_nonneg_left hs B.coe_nonneg
     _ = _ := by ring
 
-/-- A single compact Schwartz bump isolates all atoms after translation.
-Its radius depends only on the separation of the support. -/
-theorem exists_isolating_test {d : ℕ} {A : Set (Space d)} (hA : UniformlyDiscrete A) :
+/-- A compact test of arbitrarily small prescribed radius isolates every atom. -/
+theorem exists_small_isolating_test {d : ℕ} {A : Set (Space d)} (hA : UniformlyDiscrete A) (r : ℝ) (hr : 0 < r) :
     ∃ φ : SchwartzMap (Space d) ℂ, HasCompactSupport φ ∧ φ 0 = 1 ∧
-      ∀ x ∈ A, ∀ y ∈ A, y ≠ x → φ (y - x) = 0 := by
+      (∀ x ∈ A, ∀ y ∈ A, y ≠ x → φ (y - x) = 0) ∧
+      ∀ z, φ z ≠ 0 → ‖z‖ < r := by
   obtain ⟨η, hη, hsep⟩ := hA
+  let ρ := min η r
+  have hρ : 0 < ρ := lt_min hη hr
   let b : ContDiffBump (0 : Space d) :=
-    { rIn := η / 4, rOut := η / 2, rIn_pos := by positivity, rIn_lt_rOut := by linarith }
+    { rIn := ρ / 4, rOut := ρ / 2, rIn_pos := by positivity, rIn_lt_rOut := by linarith }
   let f : Space d → ℂ := Complex.ofRealCLM ∘ b
   have hc : HasCompactSupport f := b.hasCompactSupport.comp_left rfl
   have hs : ContDiff ℝ ∞ f := Complex.ofRealCLM.contDiff.comp b.contDiff
-  refine ⟨hc.toSchwartzMap hs, hc, ?_, ?_⟩
+  refine ⟨hc.toSchwartzMap hs, hc, ?_, ?_, ?_⟩
   · change ((b 0 : ℝ) : ℂ) = 1
     rw [b.one_of_mem_closedBall (by simpa using b.rIn_pos.le)]
     norm_num
@@ -122,19 +124,35 @@ theorem exists_isolating_test {d : ℕ} {A : Set (Space d)} (hA : UniformlyDiscr
     rw [b.zero_of_le_dist]
     · norm_num
     · have hxy := hsep hy hx hne
-      change η / 2 ≤ dist (y - x) 0
+      change ρ / 2 ≤ dist (y - x) 0
       rw [dist_zero_right, ← dist_eq_norm]
-      linarith
+      linarith [min_le_left η r]
+  · intro z hz
+    by_contra! hzr
+    apply hz
+    change ((b z : ℝ) : ℂ) = 0
+    rw [b.zero_of_le_dist]
+    · norm_num
+    · change ρ / 2 ≤ dist z 0
+      rw [dist_zero_right]
+      linarith [min_le_right η r]
 
-/-- Local atomicity controls each actual coefficient by a common polynomial
-of the distance from the origin. This is used for both Fourier records. -/
-theorem atomic_coefficients_polynomial_growth {d : ℕ}
+/-- A single compact Schwartz bump isolates all atoms after translation.
+Its radius depends only on the separation of the support. -/
+theorem exists_isolating_test {d : ℕ} {A : Set (Space d)} (hA : UniformlyDiscrete A) :
+    ∃ φ : SchwartzMap (Space d) ℂ, HasCompactSupport φ ∧ φ 0 = 1 ∧
+      ∀ x ∈ A, ∀ y ∈ A, y ≠ x → φ (y - x) = 0 := by
+  obtain ⟨φ, hc, hzero, hisol, _⟩ := exists_small_isolating_test hA 1 one_pos
+  exact ⟨φ, hc, hzero, hisol⟩
+
+/-- Evaluating the translated isolating test recovers the coefficient of
+each atom, including its complex phase. -/
+theorem translated_isolating_test_eq {d : ℕ}
     {μ : TemperedDistribution (Space d) ℂ} {A : Set (Space d)} {a : A → ℂ}
-    (hμ : HasLocallyAtomicExpansion μ A a) (hA : UniformlyDiscrete A) :
-    ∃ N : ℕ, ∃ C : ℝ, 0 ≤ C ∧ ∀ x : A, ‖a x‖ ≤ C * (1 + ‖(x : Space d)‖) ^ N := by
-  obtain ⟨φ, hc, hzero, hisol⟩ := exists_isolating_test hA
-  obtain ⟨N, C, hC, hbound⟩ := tempered_translated_test_polynomial_growth μ φ
-  refine ⟨N, C, hC, fun x => ?_⟩
+    (hμ : HasLocallyAtomicExpansion μ A a) (φ : SchwartzMap (Space d) ℂ)
+    (hc : HasCompactSupport φ) (hzero : φ 0 = 1)
+    (hisol : ∀ x ∈ A, ∀ y ∈ A, y ≠ x → φ (y - x) = 0) (x : A) :
+    μ ((SchwartzMap.compSubConstCLM ℂ x.val) φ) = a x := by
   let ψ := (SchwartzMap.compSubConstCLM ℂ x.val) φ
   have hcψ : HasCompactSupport (⇑ψ) := by
     change HasCompactSupport (fun y => φ (y - x.val))
@@ -145,8 +163,18 @@ theorem atomic_coefficients_polynomial_growth {d : ℕ}
     change a y * φ (y.val - x.val) = 0
     rw [hisol x x.property y y.property (fun he => hy (Subtype.ext he)), mul_zero]
   have heq := hsum.unique (hasSum_single x hoff)
-  have hval : μ ψ = a x := by simpa [ψ, SchwartzMap.compSubConstCLM_apply, hzero] using heq
-  rw [← hval]
+  simpa [ψ, SchwartzMap.compSubConstCLM_apply, hzero] using heq
+
+/-- Local atomicity controls each actual coefficient by a common polynomial
+of the distance from the origin. This is used for both Fourier records. -/
+theorem atomic_coefficients_polynomial_growth {d : ℕ}
+    {μ : TemperedDistribution (Space d) ℂ} {A : Set (Space d)} {a : A → ℂ}
+    (hμ : HasLocallyAtomicExpansion μ A a) (hA : UniformlyDiscrete A) :
+    ∃ N : ℕ, ∃ C : ℝ, 0 ≤ C ∧ ∀ x : A, ‖a x‖ ≤ C * (1 + ‖(x : Space d)‖) ^ N := by
+  obtain ⟨φ, hc, hzero, hisol⟩ := exists_isolating_test hA
+  obtain ⟨N, C, hC, hbound⟩ := tempered_translated_test_polynomial_growth μ φ
+  refine ⟨N, C, hC, fun x => ?_⟩
+  rw [← translated_isolating_test_eq hμ φ hc hzero hisol x]
   exact hbound x
 
 end

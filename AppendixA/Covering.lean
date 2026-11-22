@@ -21,7 +21,7 @@ open scoped Matrix
 noncomputable section
 
 /-- Complex trigonometric polynomials on real coordinate space. -/
-def trigPolynomials (d : ℕ) : Subalgebra ℂ ((Fin d → ℝ) → ℂ) :=
+@[expose] def trigPolynomials (d : ℕ) : Subalgebra ℂ ((Fin d → ℝ) → ℂ) :=
   Algebra.adjoin ℂ (Set.range fun (u : Fin d → ℝ) (x : Fin d → ℝ) =>
     (Real.fourierChar (u ⬝ᵥ x) : ℂ))
 
