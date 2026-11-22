@@ -78,7 +78,8 @@ theorem enlargedCoset_add {d : ℕ} {H K : Submodule ℤ (Space d)} {p x u : Spa
   obtain ⟨v, hv, h⟩ := hx
   exact ⟨v + u, H.add_mem hv hu, by rwa [show x + u - p - (v + u) = x - p - v by abel]⟩
 
-private theorem matrix_fundamental_region {d : ℕ} (T : Matrix (Fin d) (Fin d) ℝ) (hT : T.det ≠ 0) :
+/-- Each point has a representative in a common bounded set modulo the lattice. -/
+theorem matrix_fundamental_region {d : ℕ} (T : Matrix (Fin d) (Fin d) ℝ) (hT : T.det ≠ 0) :
     ∃ U : Set (Space d), Bornology.IsBounded U ∧ ∀ x : Space d,
       ∃ h ∈ matrixLattice T, x - h ∈ U := by
   let f (i : Fin d) : Space d := WithLp.toLp 2 (T.col i)

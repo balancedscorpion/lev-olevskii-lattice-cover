@@ -62,32 +62,26 @@ theorem remove_affine_subspaces_from_cover {m d : ℕ} {ι : Type*} [Finite ι]
   · exact hfx (by simpa [Finset.prod_apply, g] using hvanish j z)
   · exact (hc j x hj).not_ge hdist
 
-/-- A finite cover by character fibers of codimension at least the ambient
-dimension gives a lattice cover once polynomially filtered atoms recur. An
-extra identity lattice makes the final family nonempty even for empty support. -/
-theorem finiteLatticeCover_of_character_fibers {d n : ℕ} {ι : Type*} [Finite ι]
-    (A : Set (Space d)) (L : Matrix (Fin n) (Fin d) ℝ) (hL : LinearIndependent ℤ L.row)
-    (k : ι → ℕ) (hk : ∀ j, d ≤ k j) (a : ι → Fin d → ℝ)
-    (C : (j : ι) → Matrix (Fin (k j)) (Fin n) ℤ) (hC : ∀ j, LinearIndependent ℤ (C j).row)
-    (hfibers : ∀ x ∈ A, ∃ j, ∀ i, Real.fourierChar
-      ((((C j).map (Int.castRingHom ℝ) * L) *ᵥ (WithLp.ofLp x - a j)) i) = 1)
+/-- Recurrence removes the proper affine subspaces from a cover whose
+remaining pieces already lie in translates of full-rank lattices. -/
+theorem finiteLatticeCover_of_lattice_or_subspace {d : ℕ} {ι : Type*} [Finite ι]
+    (A : Set (Space d)) (a : ι → Fin d → ℝ) (F : ι → Set (Fin d → ℝ))
+    (hsplit : ∀ j, (∃ T : Matrix (Fin d) (Fin d) ℝ, T.det ≠ 0 ∧
+      ∀ x ∈ F j, ∃ z : Fin d → ℤ, x = a j + T *ᵥ (fun i => (z i : ℝ))) ∨
+      ∃ W : Submodule ℝ (Fin d → ℝ), W ≠ ⊤ ∧ ∀ x ∈ F j, x - a j ∈ W)
+    (hfibers : ∀ x ∈ A, ∃ j, WithLp.ofLp x ∈ F j)
     (hdense : ∀ f ∈ trigPolynomials d, (∃ p ∈ A, f (WithLp.ofLp p) ≠ 0) →
       ∃ R : ℝ, ∀ c, ∃ x ∈ A, f (WithLp.ofLp x) ≠ 0 ∧ dist c (WithLp.ofLp x) ≤ R) :
     HasFiniteLatticeCover A := by
   classical
-  let F (j : ι) := {x : Fin d → ℝ | ∀ i, Real.fourierChar
-    ((((C j).map (Int.castRingHom ℝ) * L) *ᵥ (x - a j)) i) = 1}
   let good (j : ι) := ∃ T : Matrix (Fin d) (Fin d) ℝ, T.det ≠ 0 ∧
     ∀ x ∈ F j, ∃ z : Fin d → ℤ, x = a j + T *ᵥ (fun i => (z i : ℝ))
-  have split (j : ι) : good j ∨ ∃ W : Submodule ℝ (Fin d → ℝ), W ≠ ⊤ ∧
-      ∀ x ∈ F j, x - a j ∈ W :=
-    characterFiber_lattice_or_subspace (hk j) (C j) L (hC j) hL (a j)
   let g := {j : ι // good j}
   let bad := {j : ι // ¬ good j}
   let := Fintype.ofFinite g
   let e := Fintype.equivFin g
   choose T hT hcoset using fun j : g => j.property
-  choose W hW hflat using fun j : bad => (split j.val).resolve_left j.property
+  choose W hW hflat using fun j : bad => (hsplit j.val).resolve_left j.property
   let S := WithLp.ofLp '' A
   have hcover (x) (hx : x ∈ S) :
       (∃ (j : Fin (Fintype.card g)) (z : Fin d → ℤ),
@@ -114,6 +108,23 @@ theorem finiteLatticeCover_of_character_fibers {d n : ℕ} {ι : Type*} [Finite 
   intro x hx
   obtain ⟨j, z, hz⟩ := hfinal _ ⟨x, hx, rfl⟩
   exact ⟨j.succ, z, congrArg (WithLp.toLp 2) hz⟩
+
+/-- A finite cover by character fibers of codimension at least the ambient
+dimension gives a lattice cover once polynomially filtered atoms recur. An
+extra identity lattice makes the final family nonempty even for empty support. -/
+theorem finiteLatticeCover_of_character_fibers {d n : ℕ} {ι : Type*} [Finite ι]
+    (A : Set (Space d)) (L : Matrix (Fin n) (Fin d) ℝ) (hL : LinearIndependent ℤ L.row)
+    (k : ι → ℕ) (hk : ∀ j, d ≤ k j) (a : ι → Fin d → ℝ)
+    (C : (j : ι) → Matrix (Fin (k j)) (Fin n) ℤ) (hC : ∀ j, LinearIndependent ℤ (C j).row)
+    (hfibers : ∀ x ∈ A, ∃ j, ∀ i, Real.fourierChar
+      ((((C j).map (Int.castRingHom ℝ) * L) *ᵥ (WithLp.ofLp x - a j)) i) = 1)
+    (hdense : ∀ f ∈ trigPolynomials d, (∃ p ∈ A, f (WithLp.ofLp p) ≠ 0) →
+      ∃ R : ℝ, ∀ c, ∃ x ∈ A, f (WithLp.ofLp x) ≠ 0 ∧ dist c (WithLp.ofLp x) ≤ R) :
+    HasFiniteLatticeCover A := by
+  let F (j : ι) := {x : Fin d → ℝ | ∀ i, Real.fourierChar
+    ((((C j).map (Int.castRingHom ℝ) * L) *ᵥ (x - a j)) i) = 1}
+  apply finiteLatticeCover_of_lattice_or_subspace A a F _ hfibers hdense
+  exact fun j => characterFiber_lattice_or_subspace (hk j) (C j) L (hC j) hL (a j)
 
 end
 end MeyerGeneralProblem.LevOlevskii

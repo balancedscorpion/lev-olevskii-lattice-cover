@@ -8,3 +8,4 @@ public import AppendixA.InvariantAtoms
 public import AppendixA.FiniteDualClasses
 public import AppendixA.SpectralBasis
 public import AppendixA.SpectralRank
+public import AppendixA.LaurentReduction
