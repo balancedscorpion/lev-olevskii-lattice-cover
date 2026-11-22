@@ -41,9 +41,10 @@ This branch targets the unconditional Theorem A.1. The proved declarations curre
 | [Restricted character rank](AppendixA/SpectralRank.lean) | For any finite family of characters restricted to the physical sites, the dimension of their span is bounded by the number of shifted spectral sites in a fixed ball. The radius is independent of the chosen characters. |
 | [Quotient windows](AppendixA/QuotientWindows.lean), [coset characters](AppendixA/CosetCharacters.lean) and [coset rank](AppendixA/CosetRank.lean) | If a coset satisfies the support’s polynomial relations and its subgroup spans the ambient real space, the subgroup lies in a full-rank lattice. The proof compares independent characters on the coset with an upper bound from the spectrum. |
 | [Laurent reduction](AppendixA/LaurentReduction.lean) | A finite coset cover in the unitary torus pulls back to a cover of the physical sites. The coset rank estimate and recurrence then imply the physical lattice cover. |
+| [Laurent equations](AppendixA/LaurentEquations.lean), [minimal vanishing sums](AppendixA/UnitEquations.lean) and [unit-equation finiteness](AppendixA/UnitFiniteness.lean) | The Hilbert basis theorem reduces the Laurent closure to finitely many equations. Splitting vanishing subsums and dividing a minimal sum by one of its terms reduces the required coset theorem to finiteness of nondegenerate solutions of a single normalized unit equation. |
 | [Zero distribution](AppendixA/Zero.lean) | Theorem A.1 holds for the zero distribution, with both carriers empty and an empty comb sum. |
 
-The remaining hypothesis of `theoremA1_of_unitaryLaurent` is `UnitaryLaurentCosetTheorem`, the unitary case of Laurent’s torus Mordell–Lang theorem. The formalization assumes this proposition as an explicit argument. The direct coset rank estimate supplies the dimension control needed for Appendix A. [Alon and Kummer, Sections 3 and 4](https://arxiv.org/html/2611.24286v1)
+The remaining hypothesis of `theoremA1_of_unitEquations` is `UnitaryUnitEquationFiniteness`. It says that a linear equation with nonzero complex coefficients and right-hand side one has finitely many nondegenerate solutions in a finitely generated subgroup of a unitary torus. This is a special case of Theorem 1.1 of Evertse, Schlickewei and Schmidt. Its proof remains open in this Lean development. [Published unit-equation theorem](https://annals.math.princeton.edu/2002/155-3/p04) · [Alon and Kummer, Sections 3 and 4](https://arxiv.org/html/2611.24286v1)
 
 ## Verification
 
@@ -63,7 +64,7 @@ On 22 November 2026 the two modules built with Lean 4.35.0-rc3. The solution com
 
 ## Palomar preparation
 
-Hold final intake for a proof of Theorem A.1. The current theorem is a direct consequence of the explicit physical-cover hypothesis. Palomar evaluates the research significance of the theorem selected in Comparator. [Submission criteria](https://github.com/PalomarRegistry/PalomarPolicy/blob/28bd48b9b71bbb2a82c718ce761d5a4220ef8e60/CONTRIBUTING.md#1-decide-whether-the-result-is-suitable)
+Hold final intake for a proof of Theorem A.1. The current Comparator target assumes Theorem A.1 and deduces the physical lattice cover. Palomar evaluates the research significance of the theorem selected in Comparator. [Submission criteria](https://github.com/PalomarRegistry/PalomarPolicy/blob/28bd48b9b71bbb2a82c718ce761d5a4220ef8e60/CONTRIBUTING.md#1-decide-whether-the-result-is-suitable)
 
 After selecting the intended theorem and building it, a maintainer can run **Palomar mechanical preflight** from GitHub Actions on a public revision. The workflow checks the exact commit selected by the dispatch. Inspect the full mechanical report and its source SHA before deciding whether to send that revision to intake. [Workflow](.github/workflows/palomar.yml) · [Palomar intake](https://submit.palomar-registry.org/)
 
