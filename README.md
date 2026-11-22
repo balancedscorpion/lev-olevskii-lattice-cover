@@ -12,9 +12,22 @@ The weights at the specified sites are nonzero. Each comb has its own invertible
 
 The proof restricts the two global atomic identities to compactly supported Schwartz tests, applies the Appendix A hypothesis in the same dimension, and takes the physical cover from its conclusion. It needs neither the polynomial bound nor the weighted decomposition for this last step. Obtaining the covers and the decomposition from uniform discreteness is the outstanding analytic argument.
 
+## Appendix A proof in development
+
+This branch targets the unconditional Theorem A.1. The proved declarations currently establish the following parts of its argument.
+
+| Source | Checked result |
+| --- | --- |
+| [Integer preimages](AppendixA/IntegerPreimage.lean) and [character separation](AppendixA/CharacterSeparation.lean) | The preimage of the specified integer character equations lies in one translated lattice or a translate of a proper real subspace. A finite product of characters minus one separates a point outside a finite lattice union. |
+| [Affine subspaces](AppendixA/AffineEscape.lean) and [covering argument](AppendixA/Covering.lean) | Finite unions of proper affine subspaces leave arbitrarily large balls empty. A finite character-fiber cover therefore gives the required lattice cover when the atoms surviving each polynomial multiplier are relatively dense. |
+| [Almost periods](AppendixA/AlmostPeriods.lean) | Absolutely convergent Fourier series have relatively dense uniform almost periods. A nonzero such series localized near the atoms implies their relative density. |
+| [Atomic coefficients](AppendixA/AtomicGrowth.lean) | Translates of one compact Schwartz bump recover all individual weights on a uniformly discrete carrier. Tempered continuity gives a common polynomial bound on those weights in arbitrary dimension. This generalizes the one-dimensional [upstream estimate](https://github.com/ls558/MeyerGeneralProblem/blob/0f5c061c78d2e92821d47b7f87cf64152e68d108/lean/MeyerGeneralProblem/UniformDiscrete/AtomicGrowth.lean). |
+
+Connecting the atomic Fourier records to the recurrence lemma, obtaining the finite character fibers from the algebraic results used in Appendix A, and recovering the weights by dual-lattice averaging and inclusion–exclusion remain open proof obligations on this branch.
+
 ## Verification
 
-Both modules stand alone and import Mathlib. Challenge has one intentional theorem placeholder. Solution supplies the proof under the same name in the namespace `MeyerGeneralProblem.LevOlevskii`. The allowed axioms are `propext`, `Quot.sound` and `Classical.choice`. [Challenge](Challenge.lean) · [Solution](Solution.lean) · [Comparator configuration](comparator.json)
+Challenge imports Mathlib. Solution imports the Appendix A modules and uses the predicates in [Definitions](AppendixA/Definitions.lean). Challenge has one intentional theorem placeholder. Solution supplies the proof under the same name in the namespace `MeyerGeneralProblem.LevOlevskii`. The allowed axioms are `propext`, `Quot.sound` and `Classical.choice`. [Challenge](Challenge.lean) · [Solution](Solution.lean) · [Comparator configuration](comparator.json)
 
 Run these commands in a fresh clone with Elan installed. Lake reads the pinned Mathlib revision from the committed manifest.
 
