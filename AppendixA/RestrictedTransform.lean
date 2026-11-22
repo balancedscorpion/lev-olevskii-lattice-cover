@@ -87,7 +87,8 @@ theorem fourierValue_inclusion_exclusion {d : ℕ} {ι : Type*}
   simpa only [Set.indicator_of_mem (hcover x.property)] using
     J.indicator_biUnion_eq_sum_powerset D (fun z => a x * (𝓕 φ) z) x.val
 
-private theorem translated_sum_ball_bound {d : ℕ} {B : Set (Space d)} (b : B → ℂ) (r : ℝ)
+/-- The variation bound on a ball controls every translated test supported there. -/
+theorem translated_sum_ball_bound {d : ℕ} {B : Set (Space d)} (b : B → ℂ) (r : ℝ)
     (M : ℝ≥0) (hM : ∀ c : Space d, (∑' x : {x : B // dist x.val c ≤ r}, ‖b x.val‖ₑ) ≤ M)
     (φ : SchwartzMap (Space d) ℂ) (c : Space d) (hφ : ∀ z, ‖φ z‖ ≤ 1)
     (hsupp : ∀ z, φ z ≠ 0 → dist z c ≤ r) (u : Space d) :

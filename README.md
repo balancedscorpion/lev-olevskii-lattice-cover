@@ -1,6 +1,6 @@
 # From Martin’s Appendix A to the Lev–Olevskii lattice-cover question
 
-**Proved in Lean:** If Martin’s Appendix A conclusion holds, including the lattice covers obtained in its proof, then the answer to Lev and Olevskii’s covering question is affirmative. The paper’s proof of Theorem A.1 remains to be formalised. [Martin, Appendix A](https://hexagonmath.org/pdf/2611.00744v2#page=12) · [Lev and Olevskii, §11.2(1)](https://arxiv.org/pdf/1512.08735v2#page=20)
+**Proved in Lean:** If Martin’s Appendix A conclusion holds, including the lattice covers obtained in its proof, then the answer to Lev and Olevskii’s covering question is affirmative. On this branch the comb decomposition has also been proved assuming the finite lattice covers. Deriving the physical cover from the hypotheses of Theorem A.1 remains open in Lean. [Martin, Appendix A](https://hexagonmath.org/pdf/2611.00744v2#page=12) · [Lev and Olevskii, §11.2(1)](https://arxiv.org/pdf/1512.08735v2#page=20)
 
 | Lean declaration | Mathematical content |
 | --- | --- |
@@ -10,7 +10,7 @@
 
 The weights at the specified sites are nonzero. Each comb has its own invertible matrix, shift, modulation and complex scalar. Its character is evaluated at the translated site. Contributions add where lattices overlap, and an empty sum represents the zero distribution.
 
-The proof restricts the two global atomic identities to compactly supported Schwartz tests, applies the Appendix A hypothesis in the same dimension, and takes the physical cover from its conclusion. It needs neither the polynomial bound nor the weighted decomposition for this last step. Obtaining the covers and the decomposition from uniform discreteness is the outstanding analytic argument.
+The proof restricts the two global atomic identities to compactly supported Schwartz tests, applies the Appendix A hypothesis in the same dimension, and takes the physical cover from its conclusion. It needs neither the polynomial bound nor the weighted decomposition for this last step.
 
 ## Appendix A proof in development
 
@@ -32,9 +32,11 @@ This branch targets the unconditional Theorem A.1. The proved declarations curre
 | [Shrinking tests](AppendixA/ShrinkingTests.lean) and [restricted atoms](AppendixA/RestrictedAtoms.lean) | Nested smooth tests recover the spectral coefficients at every point, including zero off the spectrum. Restriction coefficients inherit the translation phase. Inclusion–exclusion reconstructs the original coefficients, and hyperplane restrictions have zero coefficients everywhere. |
 | [Lattice intersections](AppendixA/LatticeIntersections.lean) and [full-rank restrictions](AppendixA/FullRankRestrictions.lean) | Given the physical cover, the entire spectral coefficient function is a finite integer combination of those of single full-rank physical coset restrictions. |
 | [Dual cosets](AppendixA/DualCosets.lean) and [comb weights](AppendixA/CombWeights.lean) | On a dual-lattice coset each restriction coefficient has a fixed modulation. If the nonzero coefficients occupy finitely many such cosets, they give the distributional comb sum. Applying this to the inverse Fourier pair returns the formula for the physical distribution. |
+| [Lattice orbits](AppendixA/LatticeOrbits.lean) and [box packing](AppendixA/BoxPacking.lean) | Finite orbits contribute only finitely many dual-lattice classes. For infinite orbits, packing disjoint translates gives upper bounds for the proportion of lattice points in shrinking neighborhoods of a coset. |
+| [Finite dual classes](AppendixA/FiniteDualClasses.lean) | The spectral cover confines the nonzero coefficients of each full-rank restriction to finitely many dual-lattice classes. Theorem A.1 follows if the physical lattice cover can be proved for every admissible Fourier pair. Applying that covering result to the inverse pair also yields the spectral cover. |
 | [Zero distribution](AppendixA/Zero.lean) | Theorem A.1 holds for the zero distribution, with both carriers empty and an empty comb sum. |
 
-The algebraic step still requires finite generation of the support and spectrum groups, the dimension bound for the Zariski closure, and Laurent’s theorem to obtain the finite family of character fibers. On the weight side, it remains to use the spectral cover to confine the nonzero coefficients of each full-rank physical restriction to finitely many dual-lattice cosets. The declaration `theoremA1_of_cover_and_finite_dual_classes` derives the complete conclusion of Theorem A.1 from these two inputs. [Alon and Kummer, Sections 3 and 4](https://arxiv.org/html/2611.24286v1)
+The algebraic step still requires finite generation of the support and spectrum groups, the dimension bound for the Zariski closure, and Laurent’s theorem to obtain the finite family of character fibers. The declaration `theoremA1_of_physical_cover` derives the complete conclusion of Theorem A.1 from the physical covering result alone. [Alon and Kummer, Sections 3 and 4](https://arxiv.org/html/2611.24286v1)
 
 ## Verification
 
