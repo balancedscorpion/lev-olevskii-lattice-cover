@@ -19,6 +19,13 @@ noncomputable section
 open FourierTransform Set
 open scoped FourierTransform NNReal ENNReal
 
+private theorem double_fourier_test_apply {d : ℕ} (φ : SchwartzMap (Space d) ℂ) (x : Space d) :
+    (𝓕 (𝓕 φ)) x = φ (-x) := by
+  have h := congrArg (fun ψ : SchwartzMap (Space d) ℂ => ψ (-x))
+    (fourierInv_fourier_eq (F := SchwartzMap (Space d) ℂ) φ)
+  change (𝓕 (𝓕 φ)) (- -x) = φ (-x) at h
+  simpa only [neg_neg] using h
+
 /-- The double Fourier transform of a locally atomic distribution has the
 original coefficients at the reflected sites, with the same separation. -/
 theorem reflected_atomic_expansion {d : ℕ} {A : Set (Space d)} {a : A → ℂ}
@@ -35,10 +42,7 @@ theorem reflected_atomic_expansion {d : ℕ} {A : Set (Space d)} {a : A → ℂ}
       right_inv := fun x => Subtype.ext (neg_neg x.val) }
   constructor
   · refine ⟨fun x => hμ.1 (e x), fun φ hc => ?_⟩
-    have hval (x : Space d) : (𝓕 (𝓕 φ)) x = φ (-x) := by
-      have h := congrArg (fun ψ : SchwartzMap (Space d) ℂ => ψ (-x)) (fourierInv_fourier_eq (F := SchwartzMap (Space d) ℂ) φ)
-      change (𝓕 (𝓕 φ)) (- -x) = φ (-x) at h
-      simpa only [neg_neg] using h
+    have hval := double_fourier_test_apply φ
     let ψ : SchwartzMap (Space d) ℂ := 𝓕 (𝓕 φ)
     have hc' : HasCompactSupport (⇑ψ) := by
       have hfun : ⇑ψ = (φ : Space d → ℂ) ∘ Homeomorph.neg (Space d) := funext hval
@@ -50,6 +54,34 @@ theorem reflected_atomic_expansion {d : ℕ} {A : Set (Space d)} {a : A → ℂ}
     refine ⟨η, hη, ?_⟩
     intro x hx y hy hne
     simpa using hsep (show -x ∈ A from hx) (show -y ∈ A from hy) (fun h => hne (neg_injective h))
+
+/-- The inverse transform has the reflected spectral record. Applying the
+forward transform to this pair recovers the original distribution. -/
+theorem inverse_atomic_expansion {d : ℕ} {B : Set (Space d)} {b : B → ℂ}
+    {μ : TemperedDistribution (Space d) ℂ}
+    (hν : HasLocallyAtomicExpansion (𝓕 μ) B b) (hB : UniformlyDiscrete B) :
+    let B' := {x : Space d | -x ∈ B}
+    HasLocallyAtomicExpansion (𝓕⁻ μ) B' (fun x => b ⟨-x.val, x.property⟩) ∧
+      UniformlyDiscrete B' := by
+  have hthree : 𝓕 (𝓕 (𝓕 μ)) = 𝓕⁻ μ := by
+    ext φ
+    change μ (𝓕 (𝓕 (𝓕 φ))) = μ (𝓕⁻ φ)
+    congr 1
+    ext x
+    exact double_fourier_test_apply (𝓕 φ) x
+  rw [← hthree]
+  exact reflected_atomic_expansion hν hB
+
+theorem reflected_lattice_cover {d : ℕ} {B : Set (Space d)} (hB : HasFiniteLatticeCover B) :
+    HasFiniteLatticeCover {x : Space d | -x ∈ B} := by
+  obtain ⟨m, hm, t, T, hT, h⟩ := hB
+  refine ⟨m, hm, -t, T, hT, ?_⟩
+  intro x hx
+  obtain ⟨j, z, hz⟩ := h (-x) hx
+  refine ⟨j, -z, ?_⟩
+  have hcast : (fun i => (((-z) i : ℤ) : ℝ)) = -(fun i => (z i : ℝ)) := by ext; simp
+  rw [latticeSite, hcast, Matrix.mulVec_neg, WithLp.toLp_neg]
+  simpa only [latticeSite, Pi.neg_apply, neg_add_rev, neg_neg, add_comm] using congrArg Neg.neg hz
 
 /-- A common finite variation bound for all physical and spectral balls of
 the same radius. -/
