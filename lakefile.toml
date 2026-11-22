@@ -3,6 +3,11 @@ version = "0.1.0"
 defaultTargets = ["Challenge", "Solution"]
 
 [[require]]
+name = "SubspaceTheorems"
+git = "https://github.com/rwst/Subspace-Theorems.git"
+rev = "2fc7bea12d398fbc8ea758ecb8516efe8e3ef33d"
+
+[[require]]
 name = "mathlib"
 git = "https://github.com/leanprover-community/mathlib4"
 rev = "d870b9068518a0870842d15a0cd42637ec30b587"

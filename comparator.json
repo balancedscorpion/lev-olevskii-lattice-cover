@@ -2,7 +2,7 @@
   "challenge_module": "Challenge",
   "solution_module": "Solution",
   "theorem_names": [
-    "MeyerGeneralProblem.LevOlevskii.theoremA1Statement_implies_latticeCoverQuestion"
+    "MeyerGeneralProblem.LevOlevskii.theoremA1"
   ],
   "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"]
 }

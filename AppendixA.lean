@@ -9,3 +9,4 @@ public import AppendixA.FiniteDualClasses
 public import AppendixA.SpectralBasis
 public import AppendixA.SpectralRank
 public import AppendixA.UnitSubspaces
+public import AppendixA.UnitDescent

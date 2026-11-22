@@ -15,6 +15,18 @@
       "configFile": "lakefile.lean"
     },
     {
+      "url": "https://github.com/rwst/Subspace-Theorems.git",
+      "type": "git",
+      "subDir": null,
+      "scope": "",
+      "rev": "2fc7bea12d398fbc8ea758ecb8516efe8e3ef33d",
+      "name": "SubspaceTheorems",
+      "manifestFile": "lake-manifest.json",
+      "inputRev": "2fc7bea12d398fbc8ea758ecb8516efe8e3ef33d",
+      "inherited": false,
+      "configFile": "lakefile.lean"
+    },
+    {
       "url": "https://github.com/leanprover-community/plausible",
       "type": "git",
       "subDir": null,
@@ -99,6 +111,18 @@
       "configFile": "lakefile.toml"
     },
     {
+      "url": "https://github.com/leanprover/comparator",
+      "type": "git",
+      "subDir": null,
+      "scope": "",
+      "rev": "fd5d5bcf14177b187f66d4502071268d877887c3",
+      "name": "comparator",
+      "manifestFile": "lake-manifest.json",
+      "inputRev": "v4.35.0-rc3",
+      "inherited": true,
+      "configFile": "lakefile.toml"
+    },
+    {
       "url": "https://github.com/leanprover/lean4-cli",
       "type": "git",
       "subDir": null,
@@ -107,6 +131,18 @@
       "name": "Cli",
       "manifestFile": "lake-manifest.json",
       "inputRev": "v4.35.0-rc3",
+      "inherited": true,
+      "configFile": "lakefile.toml"
+    },
+    {
+      "url": "https://github.com/leanprover/lean4export",
+      "type": "git",
+      "subDir": null,
+      "scope": "leanprover",
+      "rev": "66f1fb4bc256072069767fce52d39480e4524869",
+      "name": "lean4export",
+      "manifestFile": "lake-manifest.json",
+      "inputRev": "master",
       "inherited": true,
       "configFile": "lakefile.toml"
     }

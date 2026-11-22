@@ -1,12 +1,13 @@
 version: v0.4
 project:
-  name: Martin’s Appendix A implies the Lev–Olevskii lattice-cover statement
+  name: Finite modulated lattice-comb decompositions for crystalline measures
   description: >
-    If Martin’s Theorem A.1 holds in its formulation with a weighted lattice-comb
-    decomposition and covers of the support and spectrum, then a crystalline measure
-    satisfying the hypotheses of the Lev–Olevskii question in dimension at least two
-    has support contained in finitely many translates of full-rank lattices. Lean proves
-    this implication. The structural theorem itself is a hypothesis.
+    In every positive dimension, a crystalline measure with uniformly discrete support
+    and uniformly discrete spectrum is a finite complex linear combination of translated,
+    modulated combs on full-rank lattices. The support and spectrum each lie in finitely
+    many lattice translates. The lattices can differ between terms, and the nonzero atomic
+    weights can approach zero. This gives the physical-support covering conclusion in the
+    question of Lev and Olevskii.
   authors: [Jamie Martin]
   responsible_maintainers: [Jamie Martin]
   license: MIT
@@ -19,40 +20,62 @@ sources:
     type: paper
     id: https://hexagonmath.org/2611.00744v2
     relationship: formalizes
-    note: Appendix A, Theorem A.1 and the two support covers in its proof on pages 12–13. The statement supplies the premise of the compared theorem.
+    note: Theorem A.1 and both covering conclusions proved on pages 12–13.
   - title: Fourier quasicrystals and discreteness of the diffraction spectrum
     authors: [Nir Lev, Alexander Olevskii]
     type: paper
     id: arXiv:1512.08735v2
-    relationship: formalizes
-    note: Section 11.2, question (1), supplies the covering conclusion. The formal proposition uses the joint polynomial variation hypothesis recorded in the source development.
+    relationship: background
+    note: Section 11.2, question (1), asks about a finite lattice cover of the physical support.
+  - title: A characterization of uniformly discrete crystalline measures with unit weights
+    authors: [Lior Alon, Mario Kummer]
+    type: paper
+    id: arXiv:2611.24286v1
+    relationship: adapts
+    note: Sections 3 and 4 motivate the finite-generation and restricted-character rank arguments.
+  - title: Équations diophantiennes exponentielles
+    authors: [Michel Laurent]
+    type: paper
+    relationship: background
+    note: The argument proves the unitary torus coset theorem needed in Appendix A.
+  - title: Heights in Diophantine Geometry
+    authors: [Enrico Bombieri, Walter Gubler]
+    type: book
+    relationship: background
+    note: The fixed-number-field unit-equation corollary 7.4.3 enters through the Subspace-Theorems dependency.
 related_formalizations:
   - id: https://github.com/ls558/MeyerGeneralProblem/tree/0f5c061c78d2e92821d47b7f87cf64152e68d108
     relationship: adapts
-    note: PR 1888 supplies both statements and the implication proof. The complete port is present in this repository and uses only Mathlib.
+    note: PR 1888 supplies the Appendix A and Lev–Olevskii statements and their implication.
+  - id: https://github.com/rwst/Subspace-Theorems/tree/2fc7bea12d398fbc8ea758ecb8516efe8e3ef33d
+    relationship: builds-on
+    note: Ralf Stephan’s Apache-2.0 number-field unit-equation development supplies the finite-level theorem used in the complex specialization argument.
 status:
-  scope: A conditional reduction from the cover-inclusive formulation of Appendix A to the physical-support question.
+  scope: Theorem A.1 in every positive dimension, including the comb identity on all Schwartz tests and finite physical and spectral covers.
   sorry_count: 0
   sorry_in_definitions: 0
   axioms: [propext, Quot.sound, Classical.choice]
   main_results:
-    - declaration: MeyerGeneralProblem.LevOlevskii.theoremA1Statement_implies_latticeCoverQuestion
+    - declaration: MeyerGeneralProblem.LevOlevskii.theoremA1
       file: Solution.lean
       comparator_config: comparator.json
       sorry_count: 0
       axioms: [propext, Quot.sound, Classical.choice]
-  notes: Counts describe the Solution. Challenge contains one intentional proof placeholder for the selected theorem.
+  notes: Solution and AppendixA contain no proof holes. Challenge has one intentional placeholder for the compared theorem.
 fidelity:
   divergences: >
-    The Appendix A premise includes the covers proved in the paper along with its displayed comb identity.
-    Only the physical cover is used. The original question is represented by global expansions on Schwartz
-    tests and a common polynomial bound on total variation in open balls. The reduction restricts those
-    expansions to compact tests and works for every dimension at least two. The empty comb sum includes zero.
+    A crystalline measure is represented by its tempered distribution and local atomic
+    expansions on compactly supported Schwartz tests. All named sites have nonzero weights.
+    The conclusion includes both lattice covers from the paper’s proof. An empty comb sum
+    represents zero. For the geometric dimension estimate the proof bounds characters
+    directly on each spanning coset. The required torus coset theorem follows from
+    number-field specialization and induction. Weight recovery uses lattice averages,
+    inclusion–exclusion and packing estimates on dual orbits.
 automation:
   methods:
     - method: agent
-      tool_setup: OpenAI Codex
-      notes: AI assistance with the upstream statements, reduction proof, automated checks, and standalone Palomar packaging.
+      tool_setup: OpenAI Codex with Lean, Lake and Mathlib
+      notes: AI assistance with statements, proof construction, dependency integration, verification and submission packaging.
 review:
   status: self-assessed
-  notes: An automated review of the upstream statements is recorded in PR 1888. Local build and axiom checks cover this standalone port.
+  notes: The standalone proof was checked by Lean. The axiom audit includes the selected theorem, its arithmetic input and the physical-cover corollary.

@@ -100,9 +100,8 @@ def theoremA1Statement : Prop :=
     UniformlyDiscrete A → UniformlyDiscrete B →
     IsFiniteModulatedLatticeCombSum μ ∧ HasFiniteLatticeCover A ∧ HasFiniteLatticeCover B
 
-/-- The physical cover in Theorem A.1 answers the original question in dimensions ≥ 2. -/
-theorem theoremA1Statement_implies_latticeCoverQuestion
-    (h : theoremA1Statement) : latticeCoverQuestion := by
+/-- Martin’s Theorem A.1, including the support and spectrum covers proved in Appendix A. -/
+theorem theoremA1 : theoremA1Statement := by
   sorry
 
 end

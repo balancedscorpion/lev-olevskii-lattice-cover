@@ -1,20 +1,19 @@
-# From Martin’s Appendix A to the Lev–Olevskii lattice-cover question
+# Theorem A.1 on crystalline measures
 
-**Proved in Lean:** If Martin’s Appendix A conclusion holds, including the lattice covers obtained in its proof, then the answer to Lev and Olevskii’s covering question is affirmative. On this branch the comb decomposition has also been proved assuming the finite lattice covers. Deriving the physical cover from the hypotheses of Theorem A.1 remains open in Lean. [Martin, Appendix A](https://hexagonmath.org/pdf/2611.00744v2#page=12) · [Lev and Olevskii, §11.2(1)](https://arxiv.org/pdf/1512.08735v2#page=20)
+Martin’s Theorem A.1 holds in every positive dimension. If a crystalline measure and its Fourier transform have uniformly discrete sites, the measure is a finite sum of translated, modulated combs on full-rank lattices. Both sets of sites have finite lattice covers. The weights are complex and may approach zero. This answers the physical-support question posed by Lev and Olevskii in dimension at least two. [Martin, Appendix A](https://hexagonmath.org/pdf/2611.00744v2#page=12) · [Lev and Olevskii, §11.2(1)](https://arxiv.org/pdf/1512.08735v2#page=20)
 
 | Lean declaration | Mathematical content |
 | --- | --- |
-| `theoremA1Statement` | In every positive dimension, a tempered distribution and its Fourier transform with locally atomic expansions and uniformly discrete sites admit a finite translated, modulated, full-rank lattice-comb decomposition of the distribution and finite lattice covers of both sets of sites. |
-| `latticeCoverQuestion` | In dimension at least two, global atomic expansions on Schwartz tests, a joint polynomial bound on variation, and uniform discreteness of both sets of sites imply a finite lattice cover of the physical support. |
-| `theoremA1Statement_implies_latticeCoverQuestion` | The proved implication between the two propositions. This is the sole target in Comparator. |
+| `theoremA1` | Unconditional proof of `theoremA1Statement`, including the comb decomposition and both lattice covers. Comparator checks this declaration. |
+| `latticeCoverQuestion_holds` | The physical-support corollary in dimensions at least two, with the global atomic expansion and variation hypotheses of the source development. |
 
 The weights at the specified sites are nonzero. Each comb has its own invertible matrix, shift, modulation and complex scalar. Its character is evaluated at the translated site. Contributions add where lattices overlap, and an empty sum represents the zero distribution.
 
-The proof restricts the two global atomic identities to compactly supported Schwartz tests, applies the Appendix A hypothesis in the same dimension, and takes the physical cover from its conclusion. It needs neither the polynomial bound nor the weighted decomposition for this last step.
+## Proof
 
-## Appendix A proof in development
+The covering argument uses finite generation and bounds on the rank of characters restricted to the support. A specialized form of Laurent’s torus theorem produces a finite coset cover. Each coset that spans physical space lies in a lattice translate by the character rank estimate. Recurrence removes the lower-dimensional pieces. The same argument applied to the inverse Fourier pair gives the spectral cover. Averaging over dual lattices, restricting to intersections and recovering the atomic coefficients then give the comb identity on all Schwartz tests.
 
-This branch targets the unconditional Theorem A.1. The proved declarations currently establish the following parts of its argument.
+For the arithmetic step, a specialization to a number field retains selected character values of infinite multiplicative order. The qualitative unit-equation theorem over that fixed number field puts the solutions on finitely many character level sets. Restriction to a level lowers the group rank. A character of finite image can instead be fixed and deleted. Induction gives finiteness over the complex numbers and hence the torus coset cover. The proof uses Ralf Stephan’s Lean formalization of the number-field unit-equation theorem. [Number-field dependency at the pinned revision](https://github.com/rwst/Subspace-Theorems/blob/2fc7bea12d398fbc8ea758ecb8516efe8e3ef33d/DiophantineApproximation/UnitEquationSeveral.lean#L498)
 
 | Source | Checked result |
 | --- | --- |
@@ -44,9 +43,10 @@ This branch targets the unconditional Theorem A.1. The proved declarations curre
 | [Laurent equations](AppendixA/LaurentEquations.lean), [minimal vanishing sums](AppendixA/UnitEquations.lean) and [unit-equation finiteness](AppendixA/UnitFiniteness.lean) | The Hilbert basis theorem reduces the Laurent closure to finitely many equations. Splitting vanishing subsums and dividing a minimal sum by one of its terms reduces the required coset theorem to finiteness of nondegenerate solutions of a single normalized unit equation. |
 | [Number-field specialization](AppendixA/UnitSpecialization.lean) | Any finite family of distinct nondegenerate complex unit-equation solutions specializes to a single number field, with the same integer exponents and number of generators. Every nonzero subsum remains nonzero. A bound uniform over number fields then implies the needed complex finiteness. |
 | [Hyperplane counting](AppendixA/UnitSubspaces.lean) | On each proper hyperplane, a minimal vanishing subsum bounds the possible ratios of two coordinates. For each fixed ratio, merging those two terms gives a shorter nondegenerate equation. Induction yields a uniform solution count from a uniform hyperplane cover. |
+| [Infinite-order specialization](AppendixA/InfiniteOrderSpecialization.lean), [character specialization](AppendixA/CharacterSpecialization.lean) and [rank descent](AppendixA/UnitDescent.lean) | Rational specializations of bounded degree preserve a finite collection of infinite-order values. Number-field unit equations and induction on rank and number of coordinates prove the required complex unit-equation finiteness. |
 | [Zero distribution](AppendixA/Zero.lean) | Theorem A.1 holds for the zero distribution, with both carriers empty and an empty comb sum. |
 
-The remaining hypothesis of `theoremA1_of_unitEquations` is `UnitaryUnitEquationFiniteness`. It says that a linear equation with nonzero complex coefficients and right-hand side one has finitely many nondegenerate solutions in a finitely generated subgroup of a unitary torus. This is a special case of Theorem 1.1 of Evertse, Schlickewei and Schmidt. The specialization proof reduces it to a uniform bound over number fields. The declaration `numberFieldBound_of_hyperplanes` derives that bound from a uniform cover by proper linear hyperplanes. Proving the uniform cover or supplying an independent proof of complex unit-equation finiteness remains open here. [Published unit-equation theorem](https://annals.math.princeton.edu/2002/155-3/p04) · [Alon and Kummer, Sections 3 and 4](https://arxiv.org/html/2611.24286v1)
+The direct rank argument proves the estimate needed for the covering step. The formalization follows the paper’s two-stage argument and supplies its own arithmetic proof of the required torus coset cover. [Alon and Kummer, §§3–4](https://arxiv.org/html/2611.24286v1)
 
 ## Verification
 
@@ -55,21 +55,19 @@ Challenge imports Mathlib. Solution imports the Appendix A modules and uses the 
 Run these commands in a fresh clone with Elan installed. Lake reads the pinned Mathlib revision from the committed manifest.
 
 ```sh
-lake exe cache get Challenge.lean Solution.lean
+lake exe cache get
 lake build Challenge Solution
 lake env lean -DwarningAsError=true Solution.lean
 ```
 
 On Linux with Bubblewrap installed and user namespaces enabled, run `lake comparator --config comparator.json` for a local statement and kernel check.
 
-On 22 November 2026 the two modules built with Lean 4.35.0-rc3. The solution compiled with warnings treated as errors. A local Comparator run on macOS accepted the theorem, including replay by Lean and NanoDa. This developer check ran without the Linux sandbox. An importing Lean file also checked a translated lattice cover, exclusion of a zero-weight site, and the empty comb representation of zero.
+The development builds with Lean 4.35.0-rc3. An independent type check expands the statement of Theorem A.1 to its four hypotheses and three conclusions. Lean reports `propext`, `Classical.choice` and `Quot.sound` for the theorem and the lattice-cover corollary.
 
 ## Palomar preparation
 
-Hold final intake for a proof of Theorem A.1. The current Comparator target assumes Theorem A.1 and deduces the physical lattice cover. Palomar evaluates the research significance of the theorem selected in Comparator. [Submission criteria](https://github.com/PalomarRegistry/PalomarPolicy/blob/28bd48b9b71bbb2a82c718ce761d5a4220ef8e60/CONTRIBUTING.md#1-decide-whether-the-result-is-suitable)
-
-After selecting the intended theorem and building it, a maintainer can run **Palomar mechanical preflight** from GitHub Actions on a public revision. The workflow checks the exact commit selected by the dispatch. Inspect the full mechanical report and its source SHA before deciding whether to send that revision to intake. [Workflow](.github/workflows/palomar.yml) · [Palomar intake](https://submit.palomar-registry.org/)
+The mechanical preflight workflow runs the verifier on the exact public commit selected for dispatch. The project is at the repository root and the configuration is `comparator.json`. [Workflow](.github/workflows/palomar.yml) · [Palomar intake](https://submit.palomar-registry.org/)
 
 ## Provenance
 
-Jamie Martin is the author and responsible maintainer. The formalisation was extracted from the source module at commit `0f5c061c78d2e92821d47b7f87cf64152e68d108`. It preserves the predicates and proof, replaces the project bootstrap import with Mathlib imports, and uses Lean’s public module interface. [Pinned upstream source (access required)](https://github.com/ls558/MeyerGeneralProblem/blob/0f5c061c78d2e92821d47b7f87cf64152e68d108/lean/MeyerGeneralProblem/UniformDiscrete/LevOlevskiiLatticeCover.lean) · [Submission layout reference](https://github.com/balancedscorpion/countably-infinite-dimension-strong-meyer-spaces) · [Metadata and automation disclosure](formalization.yaml) · [MIT license](LICENSE)
+Jamie Martin is the author and responsible maintainer. The statements and the implication from Theorem A.1 to the lattice-cover question were adapted from MeyerGeneralProblem. OpenAI Codex developed the standalone Lean proof and ran the build and axiom checks. The number-field theorem comes from the pinned Apache-2.0 Subspace-Theorems dependency. This repository’s proof code is MIT-licensed. [Upstream statements](https://github.com/ls558/MeyerGeneralProblem/blob/0f5c061c78d2e92821d47b7f87cf64152e68d108/lean/MeyerGeneralProblem/UniformDiscrete/LevOlevskiiLatticeCover.lean) · [Metadata](formalization.yaml) · [License](LICENSE)
