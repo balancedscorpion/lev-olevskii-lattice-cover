@@ -57,7 +57,7 @@ status:
   axioms: [propext, Quot.sound, Classical.choice]
   main_results:
     - declaration: MeyerGeneralProblem.LevOlevskii.theoremA1
-      file: Solution.lean
+      file: LevOlevskiiSolution.lean
       comparator_config: comparator.json
       sorry_count: 0
       axioms: [propext, Quot.sound, Classical.choice]

@@ -1,6 +1,6 @@
 {
-  "challenge_module": "Challenge",
-  "solution_module": "Solution",
+  "challenge_module": "LevOlevskiiChallenge",
+  "solution_module": "LevOlevskiiSolution",
   "theorem_names": [
     "MeyerGeneralProblem.LevOlevskii.theoremA1"
   ],

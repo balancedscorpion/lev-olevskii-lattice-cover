@@ -50,14 +50,14 @@ The direct rank argument proves the estimate needed for the covering step. The f
 
 ## Verification
 
-Challenge imports Mathlib. Solution imports the Appendix A modules and uses the predicates in [Definitions](AppendixA/Definitions.lean). Challenge has one intentional theorem placeholder. Solution supplies the proof under the same name in the namespace `MeyerGeneralProblem.LevOlevskii`. The allowed axioms are `propext`, `Quot.sound` and `Classical.choice`. [Challenge](Challenge.lean) · [Solution](Solution.lean) · [Comparator configuration](comparator.json)
+Challenge imports Mathlib. Solution imports the Appendix A modules and uses the predicates in [Definitions](AppendixA/Definitions.lean). Challenge has one intentional theorem placeholder. Solution supplies the proof under the same name in the namespace `MeyerGeneralProblem.LevOlevskii`. The allowed axioms are `propext`, `Quot.sound` and `Classical.choice`. [Challenge](LevOlevskiiChallenge.lean) · [Solution](LevOlevskiiSolution.lean) · [Comparator configuration](comparator.json)
 
 Run these commands in a fresh clone with Elan installed. Lake reads the pinned Mathlib revision from the committed manifest.
 
 ```sh
 lake exe cache get
-lake build Challenge Solution
-lake env lean -DwarningAsError=true Solution.lean
+lake build LevOlevskiiChallenge LevOlevskiiSolution
+lake env lean -DwarningAsError=true LevOlevskiiSolution.lean
 ```
 
 On Linux with Bubblewrap installed and user namespaces enabled, run `lake comparator --config comparator.json` for a local statement and kernel check.
