@@ -1,0 +1,39 @@
+# From Martin’s Appendix A to the Lev–Olevskii lattice-cover question
+
+**Proved in Lean:** If Martin’s Appendix A conclusion holds, including the lattice covers obtained in its proof, then the answer to Lev and Olevskii’s covering question is affirmative. The paper’s proof of Theorem A.1 remains to be formalised. [Martin, Appendix A](https://hexagonmath.org/pdf/2611.00744v2#page=12) · [Lev and Olevskii, §11.2(1)](https://arxiv.org/pdf/1512.08735v2#page=20)
+
+| Lean declaration | Mathematical content |
+| --- | --- |
+| `theoremA1Statement` | In every positive dimension, a tempered distribution and its Fourier transform with locally atomic expansions and uniformly discrete sites admit a finite translated, modulated, full-rank lattice-comb decomposition of the distribution and finite lattice covers of both sets of sites. |
+| `latticeCoverQuestion` | In dimension at least two, global atomic expansions on Schwartz tests, a joint polynomial bound on variation, and uniform discreteness of both sets of sites imply a finite lattice cover of the physical support. |
+| `theoremA1Statement_implies_latticeCoverQuestion` | The proved implication between the two propositions. This is the sole target in Comparator. |
+
+The weights at the specified sites are nonzero. Each comb has its own invertible matrix, shift, modulation and complex scalar. Its character is evaluated at the translated site. Contributions add where lattices overlap, and an empty sum represents the zero distribution.
+
+The proof restricts the two global atomic identities to compactly supported Schwartz tests, applies the Appendix A hypothesis in the same dimension, and takes the physical cover from its conclusion. It needs neither the polynomial bound nor the weighted decomposition for this last step. Obtaining the covers and the decomposition from uniform discreteness is the outstanding analytic argument.
+
+## Verification
+
+Both modules stand alone and import Mathlib. Challenge has one intentional theorem placeholder. Solution supplies the proof under the same name in the namespace `MeyerGeneralProblem.LevOlevskii`. The allowed axioms are `propext`, `Quot.sound` and `Classical.choice`. [Challenge](Challenge.lean) · [Solution](Solution.lean) · [Comparator configuration](comparator.json)
+
+Run these commands in a fresh clone with Elan installed. Lake reads the pinned Mathlib revision from the committed manifest.
+
+```sh
+lake exe cache get Challenge.lean Solution.lean
+lake build Challenge Solution
+lake env lean -DwarningAsError=true Solution.lean
+```
+
+On Linux with Bubblewrap installed and user namespaces enabled, run `lake comparator --config comparator.json` for a local statement and kernel check.
+
+On 22 November 2026 the two modules built with Lean 4.35.0-rc3. The solution compiled with warnings treated as errors. A local Comparator run on macOS accepted the theorem, including replay by Lean and NanoDa. This developer check ran without the Linux sandbox. An importing Lean file also checked a translated lattice cover, exclusion of a zero-weight site, and the empty comb representation of zero.
+
+## Palomar preparation
+
+Hold final intake for a proof of Theorem A.1. The current theorem is a direct consequence of the explicit physical-cover hypothesis. Palomar evaluates the research significance of the theorem selected in Comparator. [Submission criteria](https://github.com/PalomarRegistry/PalomarPolicy/blob/28bd48b9b71bbb2a82c718ce761d5a4220ef8e60/CONTRIBUTING.md#1-decide-whether-the-result-is-suitable)
+
+After selecting the intended theorem and building it, a maintainer can run **Palomar mechanical preflight** from GitHub Actions on a public revision. The workflow checks the exact commit selected by the dispatch. Inspect the full mechanical report and its source SHA before deciding whether to send that revision to intake. [Workflow](.github/workflows/palomar.yml) · [Palomar intake](https://submit.palomar-registry.org/)
+
+## Provenance
+
+Jamie Martin is the author and responsible maintainer. The formalisation was extracted from the source module at commit `0f5c061c78d2e92821d47b7f87cf64152e68d108`. It preserves the predicates and proof, replaces the project bootstrap import with Mathlib imports, and uses Lean’s public module interface. [Pinned upstream source (access required)](https://github.com/ls558/MeyerGeneralProblem/blob/0f5c061c78d2e92821d47b7f87cf64152e68d108/lean/MeyerGeneralProblem/UniformDiscrete/LevOlevskiiLatticeCover.lean) · [Submission layout reference](https://github.com/balancedscorpion/countably-infinite-dimension-strong-meyer-spaces) · [Metadata and automation disclosure](formalization.yaml) · [MIT license](LICENSE)

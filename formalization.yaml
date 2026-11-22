@@ -1,0 +1,58 @@
+version: v0.4
+project:
+  name: Martin’s Appendix A implies the Lev–Olevskii lattice-cover statement
+  description: >
+    If Martin’s Theorem A.1 holds in its formulation with a weighted lattice-comb
+    decomposition and covers of the support and spectrum, then a crystalline measure
+    satisfying the hypotheses of the Lev–Olevskii question in dimension at least two
+    has support contained in finitely many translates of full-rank lattices. Lean proves
+    this implication. The structural theorem itself is a hypothesis.
+  authors: [Jamie Martin]
+  responsible_maintainers: [Jamie Martin]
+  license: MIT
+classification:
+  arxiv: [math.CA, math.FA]
+  msc2020: [42B10, 46F12]
+sources:
+  - title: Half-line density and the structure of crystalline measures
+    authors: [Jamie Martin]
+    type: paper
+    id: https://hexagonmath.org/2611.00744v2
+    relationship: formalizes
+    note: Appendix A, Theorem A.1 and the two support covers in its proof on pages 12–13. The statement supplies the premise of the compared theorem.
+  - title: Fourier quasicrystals and discreteness of the diffraction spectrum
+    authors: [Nir Lev, Alexander Olevskii]
+    type: paper
+    id: arXiv:1512.08735v2
+    relationship: formalizes
+    note: Section 11.2, question (1), supplies the covering conclusion. The formal proposition uses the joint polynomial variation hypothesis recorded in the source development.
+related_formalizations:
+  - id: https://github.com/ls558/MeyerGeneralProblem/tree/0f5c061c78d2e92821d47b7f87cf64152e68d108
+    relationship: adapts
+    note: PR 1888 supplies both statements and the implication proof. The complete port is present in this repository and uses only Mathlib.
+status:
+  scope: A conditional reduction from the cover-inclusive formulation of Appendix A to the physical-support question.
+  sorry_count: 0
+  sorry_in_definitions: 0
+  axioms: [propext, Quot.sound, Classical.choice]
+  main_results:
+    - declaration: MeyerGeneralProblem.LevOlevskii.theoremA1Statement_implies_latticeCoverQuestion
+      file: Solution.lean
+      comparator_config: comparator.json
+      sorry_count: 0
+      axioms: [propext, Quot.sound, Classical.choice]
+  notes: Counts describe the Solution. Challenge contains one intentional proof placeholder for the selected theorem.
+fidelity:
+  divergences: >
+    The Appendix A premise includes the covers proved in the paper along with its displayed comb identity.
+    Only the physical cover is used. The original question is represented by global expansions on Schwartz
+    tests and a common polynomial bound on total variation in open balls. The reduction restricts those
+    expansions to compact tests and works for every dimension at least two. The empty comb sum includes zero.
+automation:
+  methods:
+    - method: agent
+      tool_setup: OpenAI Codex
+      notes: AI assistance with the upstream statements, reduction proof, automated checks, and standalone Palomar packaging.
+review:
+  status: self-assessed
+  notes: An automated review of the upstream statements is recorded in PR 1888. Local build and axiom checks cover this standalone port.
