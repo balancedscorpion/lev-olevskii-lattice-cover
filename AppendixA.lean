@@ -6,4 +6,5 @@ public import AppendixA.FourierReflection
 public import AppendixA.Zero
 public import AppendixA.InvariantAtoms
 public import AppendixA.FiniteDualClasses
-public import AppendixA.SpectralWindow
+public import AppendixA.SpectralBasis
+public import AppendixA.SpectralRank
