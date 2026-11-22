@@ -20,16 +20,17 @@ open MeasureTheory Metric Filter
 open scoped Topology
 noncomputable section
 
-/-- An inverse polynomial of degree greater than the ambient dimension
-is summable on any uniformly discrete carrier. -/
-theorem summable_inverse_weight {d : ℕ} {A : Set (Space d)}
-    (hA : UniformlyDiscrete A) (s : ℕ) (hs : d < s) :
-    Summable (fun x : A => ((1 + ‖(x : Space d)‖) ^ s)⁻¹) := by
+/-- A common packing bound for the inverse polynomial over arbitrary finite
+families of sites with the specified separation. Translating the family does
+not change the bound. -/
+theorem separated_inverse_weight_bound {d : ℕ} {η : ℝ} (hη : 0 < η)
+    (s : ℕ) (hs : d < s) :
+    ∃ C : ℝ, ∀ {ι : Type*} (u : ι → Space d)
+      (_ : ∀ i j, i ≠ j → η ≤ dist (u i) (u j)) (t : Finset ι),
+      ∑ i ∈ t, ((1 + ‖u i‖) ^ s)⁻¹ ≤ C := by
   classical
-  obtain ⟨η, hη, hsep⟩ := hA
   let r := η / 2
   have hr : 0 < r := half_pos hη
-  let B (x : A) := ball (x : Space d) r
   let w (y : Space d) := ((1 + ‖y‖) ^ s)⁻¹
   let f (y : Space d) := (1 + r) ^ s * w y
   have hw : Integrable w := by
@@ -40,24 +41,25 @@ theorem summable_inverse_weight {d : ℕ} {A : Set (Space d)}
   have hf : Integrable f := hw.const_mul _
   let V := volume.real (ball (0 : Space d) r)
   have hV : 0 < V := ENNReal.toReal_pos (measure_ball_pos volume _ hr).ne' measure_ball_lt_top.ne
-  have hlocal (x : A) (y) (hy : y ∈ B x) : w x ≤ f y := by
-    have hnorm := norm_le_norm_add_norm_sub (x : Space d) y
+  refine ⟨(∫ y, f y) / V, ?_⟩
+  intro ι u hsep t
+  let B (i : ι) := ball (u i) r
+  have hlocal (x : ι) (y) (hy : y ∈ B x) : w (u x) ≤ f y := by
+    have hnorm := norm_le_norm_add_norm_sub (u x) y
     rw [norm_sub_rev] at hnorm
-    have hdist : ‖y - (x : Space d)‖ < r := by simpa [B, dist_eq_norm] using hy
-    have hbase : 1 + ‖y‖ ≤ (1 + r) * (1 + ‖(x : Space d)‖) := by
-      nlinarith [mul_nonneg hr.le (norm_nonneg (x : Space d))]
+    have hdist : ‖y - (u x)‖ < r := by simpa [B, dist_eq_norm] using hy
+    have hbase : 1 + ‖y‖ ≤ (1 + r) * (1 + ‖(u x)‖) := by
+      nlinarith [mul_nonneg hr.le (norm_nonneg (u x))]
     have hpow := pow_le_pow_left₀ (by positivity) hbase s
     rw [mul_pow] at hpow
     change _⁻¹ ≤ _ * _⁻¹
     rw [← div_eq_mul_inv, le_div_iff₀ (by positivity)]
     rwa [inv_mul_eq_div, div_le_iff₀ (by positivity)]
-  have hxbound (x : A) : w x * V ≤ ∫ y in B x, f y := by
-    have hconst : IntegrableOn (fun _ : Space d => w x) (B x) :=
+  have hxbound (x : ι) : w (u x) * V ≤ ∫ y in B x, f y := by
+    have hconst : IntegrableOn (fun _ : Space d => w (u x)) (B x) :=
       integrableOn_const measure_ball_lt_top.ne
     have h := setIntegral_mono_on hconst hf.integrableOn measurableSet_ball (hlocal x)
     simpa [B, setIntegral_const, Measure.addHaar_real_ball_center, V, mul_comm] using h
-  apply summable_of_sum_le (c := (∫ y, f y) / V) (fun _ => by positivity)
-  intro t
   apply (le_div_iff₀ hV).mpr
   rw [Finset.sum_mul]
   refine (Finset.sum_le_sum fun x _ => hxbound x).trans ?_
@@ -66,11 +68,21 @@ theorem summable_inverse_weight {d : ℕ} {A : Set (Space d)}
     dsimp [f, w]; positivity
   · intro x _ y _ hne
     refine Set.disjoint_left.mpr fun z hx hy => ?_
-    have hxy := hsep x.property y.property (fun h => hne (Subtype.ext h))
-    have htri := dist_triangle (x : Space d) z y
-    have h1 : dist (x : Space d) z < η / 2 := (mem_ball'.mp hx)
-    have h2 : dist z (y : Space d) < η / 2 := hy
+    have hxy := hsep x y hne
+    have htri := dist_triangle (u x) z (u y)
+    have h1 : dist (u x) z < η / 2 := (mem_ball'.mp hx)
+    have h2 : dist z (u y) < η / 2 := hy
     linarith
+
+/-- An inverse polynomial of degree greater than the ambient dimension
+is summable on any uniformly discrete carrier. -/
+theorem summable_inverse_weight {d : ℕ} {A : Set (Space d)}
+    (hA : UniformlyDiscrete A) (s : ℕ) (hs : d < s) :
+    Summable (fun x : A => ((1 + ‖(x : Space d)‖) ^ s)⁻¹) := by
+  obtain ⟨η, hη, hsep⟩ := hA
+  obtain ⟨C, hC⟩ := separated_inverse_weight_bound (d := d) hη s hs
+  exact summable_of_sum_le (c := C) (fun _ => by positivity)
+    (hC Subtype.val fun i j h => hsep i.property j.property (fun e => h (Subtype.ext e)))
 
 /-- The actual atomic expansion converges absolutely on every Schwartz test,
 using a polynomial bound deduced from the distribution itself. -/
